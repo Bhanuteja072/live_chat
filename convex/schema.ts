@@ -7,6 +7,8 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     imageUrl: v.string(),
+    isOnline: v.optional(v.boolean()),
+    lastSeen: v.optional(v.number()),
     createdAt: v.number(),
   }).index("by_clerkId", ["clerkId"]), // Unique index keeps one row per Clerk user.
   conversations: defineTable({
@@ -24,4 +26,20 @@ export default defineSchema({
     content: v.string(),
     createdAt: v.number(),
   }).index("by_conversation", ["conversationId", "createdAt"]),
+  conversationMembers: defineTable({
+    conversationId: v.id("conversations"),
+    userId: v.string(),
+    lastReadTime: v.number(),
+  })
+    .index("by_conversation", ["conversationId"])
+    .index("by_user", ["userId"])
+    .index("by_user_conversation", ["userId", "conversationId"]),
+  typingIndicators: defineTable({
+    conversationId: v.id("conversations"),
+    userId: v.string(),
+    userName: v.string(),
+    updatedAt: v.number(),
+  })
+    .index("by_conversation", ["conversationId"])
+    .index("by_user_conversation", ["userId", "conversationId"]),
 });
