@@ -22,6 +22,7 @@ export default function ChatPage() {
     Id<"conversations"> | null
   >(null);
   const [activeTab, setActiveTab] = useState<"chats" | "people">("chats");
+  const [showChat, setShowChat] = useState(false);
 
   const users = useQuery(api.users.getAll, clerkId ? { clerkId } : "skip");
   const conversations = useQuery(api.conversations.getMyConversations);
@@ -42,6 +43,7 @@ export default function ChatPage() {
     });
     setSelectedConversationId(conversationId);
     setActiveTab("chats");
+    setShowChat(true);
   };
 
   return (
@@ -65,7 +67,11 @@ export default function ChatPage() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="flex w-full flex-col border-b md:w-80 md:border-b-0 md:border-r">
+        <aside
+          className={`w-full flex-col border-b md:w-80 md:border-b-0 md:border-r ${
+            showChat ? "hidden md:flex" : "flex"
+          }`}
+        >
           <Tabs
             value={activeTab}
             onValueChange={(value) => setActiveTab(value as "chats" | "people")}
@@ -85,7 +91,10 @@ export default function ChatPage() {
               <ConversationList
                 conversations={conversations}
                 selectedId={selectedConversationId}
-                onSelect={setSelectedConversationId}
+                onSelect={(id) => {
+                  setSelectedConversationId(id);
+                  setShowChat(true);
+                }}
               />
             </TabsContent>
             <TabsContent value="people" className="flex-1">
@@ -93,11 +102,16 @@ export default function ChatPage() {
             </TabsContent>
           </Tabs>
         </aside>
-        <main className="flex flex-1">
+        <main className={`flex-1 flex-col ${showChat ? "flex" : "hidden md:flex"}`}>
           {selectedConversationId && clerkId ? (
             <ChatArea
               conversationId={selectedConversationId}
               currentUserClerkId={clerkId}
+              currentUserName={displayName || "Anonymous"}
+              onBack={() => {
+                setShowChat(false);
+                setSelectedConversationId(null);
+              }}
             />
           ) : (
             <EmptyState
