@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Realtime Chat App
 
-## Getting Started
+A production-ready realtime chat app built with Next.js App Router, TypeScript, Convex, Clerk, Tailwind CSS, and shadcn/ui.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Clerk authentication with user profile sync to Convex.
+- User list with live search.
+- One-on-one realtime messaging.
+- Message timestamps.
+- Empty states across the UI.
+- Responsive layout (mobile and desktop).
+- Online/offline presence.
+- Typing indicator.
+- Unread message counts.
+- Smart auto-scroll with new-message button.
+
+## Tech Stack
+
+- Next.js (App Router)
+- TypeScript
+- Convex (database + realtime)
+- Clerk (authentication)
+- Tailwind CSS
+- shadcn/ui
+
+## Project Structure
+
+```
+convex/           # Convex schema + functions
+src/app/          # Next.js app routes and layouts
+src/components/   # UI and feature components
+src/lib/          # Utilities
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 18+ (recommended)
+- A Clerk application
+- Convex project
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Create .env.local in the project root:
 
-To learn more about Next.js, take a look at the following resources:
+```
+NEXT_PUBLIC_CONVEX_URL=
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/chat
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/chat
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Install dependencies:
 
-## Deploy on Vercel
+```
+npm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Start Convex (generates convex/_generated):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+npx convex dev
+```
+
+Start Next.js:
+
+```
+npm run dev
+```
+
+Open http://localhost:3000
+
+## Authentication Setup (Clerk)
+
+1. Create a Clerk application.
+2. Enable Email and Google sign-in (or your preferred providers).
+3. Create a JWT template named "convex" in Clerk.
+4. Add Clerk keys to .env.local.
+
+## Convex Setup
+
+1. Run `npx convex dev` locally to create the project and generate types.
+2. For production, run `npx convex deploy` and set NEXT_PUBLIC_CONVEX_URL to the production URL.
+
+## Deployment
+
+Recommended: Vercel
+
+Steps:
+
+1. Push the repo to GitHub.
+2. Import the repo into Vercel.
+3. Set all environment variables in Vercel (use production Clerk keys).
+4. Deploy.
+
+## Notes
+
+- Do not commit .env.local.
+- Keep .next/, .convex/, and convex/_generated/ out of git.
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Lint the codebase
