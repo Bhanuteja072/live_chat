@@ -1,5 +1,6 @@
 "use client";
 
+import { OnlineIndicator } from "@/components/OnlineIndicator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,9 +16,11 @@ interface ConversationItem {
     clerkId: string;
     name: string;
     imageUrl: string;
+    isOnline?: boolean;
   };
   lastMessagePreview?: string;
   lastMessageTime?: number;
+  unreadCount: number;
 }
 
 interface ConversationListProps {
@@ -60,6 +63,7 @@ export function ConversationList({
           const timeLabel = conversation.lastMessageTime
             ? formatMessageTime(conversation.lastMessageTime)
             : "";
+          const hasUnread = conversation.unreadCount > 0;
           const initials = conversation.otherUser.name
             .split(" ")
             .filter(Boolean)
@@ -77,23 +81,45 @@ export function ConversationList({
                 isSelected ? "bg-accent" : "hover:bg-muted/60"
               )}
             >
-              <Avatar className="h-9 w-9">
-                <AvatarImage
-                  src={conversation.otherUser.imageUrl}
-                  alt={conversation.otherUser.name}
-                />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage
+                    src={conversation.otherUser.imageUrl}
+                    alt={conversation.otherUser.name}
+                  />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+                <span className="absolute bottom-0 right-0">
+                  <OnlineIndicator isOnline={conversation.otherUser.isOnline} size="sm" />
+                </span>
+              </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="truncate text-sm font-semibold">
+                  <p
+                    className={cn(
+                      "truncate text-sm",
+                      hasUnread ? "font-semibold" : "font-normal"
+                    )}
+                  >
                     {conversation.otherUser.name}
                   </p>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {timeLabel}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {timeLabel}
+                    </span>
+                    {hasUnread ? (
+                      <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-500 px-1 text-xs font-bold text-white">
+                        {conversation.unreadCount > 99 ? "99+" : conversation.unreadCount}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-                <p className="truncate text-xs text-muted-foreground">
+                <p
+                  className={cn(
+                    "truncate text-xs",
+                    hasUnread ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
                   {preview}
                 </p>
               </div>

@@ -75,6 +75,7 @@ export function Sidebar({ users, onUserSelect }: SidebarProps) {
                   name={user.name}
                   email={user.email}
                   imageUrl={user.imageUrl}
+                  isOnline={user.isOnline}
                 />
               </button>
             ))

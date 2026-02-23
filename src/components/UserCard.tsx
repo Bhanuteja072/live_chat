@@ -1,5 +1,6 @@
 "use client";
 
+import { OnlineIndicator } from "@/components/OnlineIndicator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -7,10 +8,17 @@ interface UserCardProps {
   name: string;
   email: string;
   imageUrl?: string;
+  isOnline?: boolean;
   className?: string;
 }
 
-export function UserCard({ name, email, imageUrl, className }: UserCardProps) {
+export function UserCard({
+  name,
+  email,
+  imageUrl,
+  isOnline,
+  className,
+}: UserCardProps) {
   const initials = name
     .split(" ")
     .filter(Boolean)
@@ -26,10 +34,15 @@ export function UserCard({ name, email, imageUrl, className }: UserCardProps) {
       )}
       role="listitem"
     >
-      <Avatar>
-        <AvatarImage src={imageUrl} alt={name} />
-        <AvatarFallback>{initials}</AvatarFallback>
-      </Avatar>
+      <div className="relative">
+        <Avatar>
+          <AvatarImage src={imageUrl} alt={name} />
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
+        <span className="absolute bottom-0 right-0">
+          <OnlineIndicator isOnline={isOnline} size="sm" />
+        </span>
+      </div>
       <div className="min-w-0">
         <p className="truncate text-sm font-medium text-foreground">{name}</p>
         <p className="truncate text-xs text-muted-foreground">{email}</p>
